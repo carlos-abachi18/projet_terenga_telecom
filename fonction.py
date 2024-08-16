@@ -15,42 +15,46 @@ colum_list= ['Customer ID', 'Gender', 'Age', 'Married', 'Number of Dependents',
        'Total Extra Data Charges', 'Total Long Distance Charges',
        'Total Revenue', 'Customer Status', 'Churn Category', 'Churn Reason']        
 
-def connexion_database ():
-    try: 
-        connexion = connector.connect (host = "localhost",
-                        user = 'root',
-                        password = "", 
-                        port = 3306 ,
-                        database = 'customers_churn_pro')
+# def connexion_database ():
+    # try: 
+    #     connexion = connector.connect (host = "localhost",
+    #                     user = 'root',
+    #                     password = "", 
+    #                     port = 3306 ,
+    #                     database = 'customers_churn_pro')
         
-        if connexion.is_connected():
-            print("connexion reussi ✅" )
-            return connexion
-        else:
-             print("connexion echouée")
-             return None
+    #     if connexion.is_connected():
+    #         print("connexion reussi ✅" )
+    #         return connexion
+    #     else:
+    #          print("connexion echouée")
+    #          return None
 
-    except connector.Error as erreur:  
-        print(f"❌❌ erreur {erreur.msg}")
-        return None
+    # except connector.Error as erreur:  
+    #     print(f"❌❌ erreur {erreur.msg}")
+    #     return None
     
-def get_data ():
-    connexion = connexion_database()   
-    if connexion is not None:
+# def get_data_sql ():
+    # connexion = connexion_database()   
+    # if connexion is not None:
 
-    # recuperation des données 
-        curseur = connexion.cursor()
-        curseur.execute ( "SELECT * FROM telecom_customer_churn" )
-        customers_data = curseur.fetchall()
-        customers_data = pd.DataFrame(customers_data)
-        return customers_data 
+    # # recuperation des données 
+    #     curseur = connexion.cursor()
+    #     curseur.execute ( "SELECT * FROM telecom_customer_churn" )
+    #     customers_data = curseur.fetchall()
+    #     customers_data = pd.DataFrame(customers_data)
+    #     return customers_data 
     
-    else:
-        print(" il y a eu une erreur ") 
+    # else:
+    #     print(" il y a eu une erreur ") 
+
+def get_data():
+  customers_data = pd.read_csv("./projet_data/telecom_customer_churn.csv")
+  return customers_data
 
 def data_cleanned ():
         
-        customers_data = get_data() 
+        customers_data = get_data()
 
      # changer les colonnes  
         number = range(0,38)
@@ -92,15 +96,15 @@ def data_cleanned ():
         customers_data.rename(columns=colum_rename,inplace= True)
 
         # supprimer la ligne de trop
-        cond = customers_data["Customer_Status"]=='Customer Status'
-        drop_line = customers_data.loc[cond].index
-        customers_data = customers_data.drop(index = drop_line)
+        # cond = customers_data["Customer_Status"]=='Customer Status'
+        # drop_line = customers_data.loc[cond].index
+        # customers_data = customers_data.drop(index = drop_line)
         return customers_data
 
 def data_clean():
      
      customers_data = data_cleanned()
-     columns_use = ['Customer_ID','Gender', 'Age', 'Married', 'Number_of_Dependents', 'City',
+     columns_use = ['Customer_ID','Gender', 'Age', 'Married', 'Number_of_Dependents',"Zip_Code",'City',
        'Latitude', 'Longitude', 'Number_of_Referrals', 'Tenure_in_Months',
        'Offer', 'Phone_Service','Multiple_Lines', 'Internet_Service', 'Internet_Type',
        'Online_Security', 'Online_Backup',
@@ -111,9 +115,6 @@ def data_clean():
 
      customers_data_clean = customers_data[columns_use]
      return customers_data_clean
-
-
-
 
 
 

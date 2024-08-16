@@ -10,8 +10,8 @@ from main import *
 
 
 st.set_page_config(
-    page_title="Page title", 
-    page_icon=":bar_chart:", 
+    page_title="Terenga_Telecom", 
+    page_icon="📡", 
     layout="wide")
 
 col1, col2 = st.columns([1,3])
@@ -161,7 +161,9 @@ def graph():
    Month_data = pd.DataFrame({"frequence":Month,"relativ_frequence":relativ_frequence,"cumul_frequence":cumul_frequence})
    churn_month = Month_data[["frequence","relativ_frequence"]].sort_values(by="relativ_frequence",ascending=False).head(15)
    cumul_month = pd.DataFrame(Month_data['cumul_frequence'].loc[[12,24,36,48,60,72]])
-
+   nombre_d_année = [1,2,3,4,5,6]
+   cumul_month.index = nombre_d_année
+   
    fig = go.Figure(data=[go.Table(
     header=dict(values= [ 'Nombre_de_Mois','Nombre_de_Client', 'Pourcentage'],
                 fill_color='steel blue',
@@ -247,4 +249,36 @@ def Map_grap():
    # Afficher la carte dans Streamlit
    st.title("Carte de visualisation des villes ")
    st_folium(m, width=700, height=500)
-Map_grap()
+col1,col2 = st.columns([2,2])
+with col1:
+   Map_grap()
+
+with col2:
+   st.title("Taux de Couverture des Villes")
+   # Sélecteur pour choisir une ville
+   selected_city = st.selectbox(
+      "Choisissez une ville",
+      options=City_data['City'].tolist(),
+   )
+
+   # Filtrer les données pour la ville sélectionnée
+   city_data = City_data[City_data['City'] == selected_city].iloc[0]
+
+   # Créer les données pour le diagramme circulaire
+   coverage_data = pd.DataFrame({
+      "Metric": ["taux_de_couverture", "Marché_potentiel"],
+      "Value": [city_data['taux_de_couverture'], 100 - city_data['taux_de_couverture']]
+   })
+
+   # Créer le diagramme circulaire
+   fig_t = px.pie(
+      coverage_data,
+      values='Value',
+      names='Metric',
+      title=f'Taux de Couverture pour {selected_city}',
+      labels={'Value': 'Pourcentage'},
+      hole=0.3)
+   
+   st.plotly_chart(fig_t)
+      
+      
