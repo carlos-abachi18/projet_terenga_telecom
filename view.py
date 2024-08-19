@@ -42,12 +42,12 @@ with st.sidebar:
      default= customers_data['Churn_Category'].unique(),
   )
   payment=st.multiselect(
-     "selectionnez la categorie de churn reason",
+     "selectionnez le moyen de payement",
      options= customers_data['Payment_Method'].unique(),
      default= customers_data['Payment_Method'].unique(),
   )
   gender=st.multiselect(
-     "selectionnez la categorie de churn reason",
+     "selectionnez le genre du client",
      options= customers_data['Gender'].unique(),
      default= customers_data['Gender'].unique(),
   )
@@ -61,10 +61,11 @@ with st.sidebar:
 condition = customers_data['Customer_Status'] == 'Churned'
 churn_data = customers_data[condition]  
 
+
 def info():
   
    with st.expander('Customer Table'):
-      cust_Show = st.multiselect( "Filtre:", options = customers_data.columns , default=['Customer_ID', 'Gender', 'Age','Customer_Status', 'Churn_Category', 'Churn_Reason'])
+      cust_Show = st.multiselect( "Filtre:", options = customers_data.columns , default= ['Customer_ID', 'Gender', 'Age','Customer_Status', 'Churn_Category', 'Churn_Reason'])
       st.write (customers_data[cust_Show])
 
    total1, total2, total3, total4,=st.columns(4)
@@ -119,7 +120,12 @@ def city_graph():
    st.info("Client Par ville " , icon ='📌')
    with st.expander("""Top 10 des villes en Terme de client """): 
       st.plotly_chart(fig,use_container_width=True)  
-city_graph()
+
+try:
+   city_graph()
+except:
+   st.info("Total Désabonné" , icon ='📌')
+   st.metric(label="erreur ", value= 0 )
 
 def graph():
    # graphique
@@ -229,7 +235,15 @@ def graph():
       with st.expander(""" les Offres """):
          st.markdown("*Ce tableau presente les ofrres de TERENGA_TELECOM et le pourcentage des desabonnée qui y avait souscrit*")
          st.plotly_chart(fig_of,use_container_width=True)
-graph()
+
+
+try:
+   graph()
+except:
+   st.info("Total Désabonné" , icon ='📌')
+   st.metric(label="❌🛑error ❌🛑", value= "Données Manquantes pour ces graphiques")
+
+
 
 def Map_grap():
    # Définir le centre de la carte
